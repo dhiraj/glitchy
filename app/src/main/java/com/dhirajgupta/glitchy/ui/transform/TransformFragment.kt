@@ -2,6 +2,7 @@ package com.dhirajgupta.glitchy.ui.transform
 
 import android.graphics.ImageDecoder
 import android.graphics.drawable.AnimatedImageDrawable
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -74,17 +75,19 @@ class TransformFragment : Fragment() {
         override fun onBindViewHolder(holder: TransformViewHolder, position: Int) {
             val item = getItem(position)
             holder.textView.text = item
-            val assets = holder.textView.context.assets
-            val source = ImageDecoder.createSource(assets,item)
-            try {
-                val drawable = ImageDecoder.decodeDrawable(source)
-                holder.imageView.setImageDrawable(drawable)
-                if (drawable is AnimatedImageDrawable){
-                    drawable.start()
+            if (SDK_INT >= 28){
+                val assets = holder.textView.context.assets
+                val source = ImageDecoder.createSource(assets,item)
+                try {
+                    val drawable = ImageDecoder.decodeDrawable(source)
+                    holder.imageView.setImageDrawable(drawable)
+                    if (drawable is AnimatedImageDrawable){
+                        drawable.start()
+                    }
                 }
-            }
-            catch (e: Exception){
-                Timber.e(e,"Failed to create drawable for position:$position")
+                catch (e: Exception){
+                    Timber.e(e,"Failed to create drawable for position:$position")
+                }
             }
         }
     }
